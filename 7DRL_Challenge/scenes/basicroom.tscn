@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://dx5sqbdpi6kru"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4gpss"]
+size = Vector3(18, 10, 18)
+
+[node name="BasicRoom" type="Node3D" unique_id=1668937815]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=910864588]
+use_collision = true
+size = Vector3(20, 0, 20)
+
+[node name="NorthMarker" type="Marker3D" parent="." unique_id=541971333]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="WestMarker" type="Marker3D" parent="." unique_id=751595731]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 0)
+
+[node name="EastMarker" type="Marker3D" parent="." unique_id=1899346412]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
+
+[node name="SouthMarker" type="Marker3D" parent="." unique_id=897580618]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+
+[node name="WallEast" type="CSGBox3D" parent="." unique_id=980378317]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 5, -0.5)
+use_collision = true
+size = Vector3(1, 11, 22)
+
+[node name="WallWest" type="CSGBox3D" parent="." unique_id=529441442]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 5, 0)
+use_collision = true
+size = Vector3(1, 11, 22)
+
+[node name="WallNorth" type="CSGBox3D" parent="." unique_id=938410336]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 5, -10)
+use_collision = true
+size = Vector3(1, 11, 22)
+
+[node name="WallSouth" type="CSGBox3D" parent="." unique_id=1972797525]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -0.5, 5, 10)
+use_collision = true
+size = Vector3(1, 11, 22)
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="." unique_id=1370401915]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 5, -7)
+use_collision = true
+size = Vector3(1, 11, 9)
+
+[node name="CSGBox3D7" type="CSGBox3D" parent="." unique_id=236823067]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 4.5, 6)
+use_collision = true
+size = Vector3(1, 12, 8)
+
+[node name="CSGBox3D8" type="CSGBox3D" parent="." unique_id=539168725]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 6, 4, -10)
+use_collision = true
+size = Vector3(1, 12, 8)
+
+[node name="CSGBox3D9" type="CSGBox3D" parent="." unique_id=1678485097]
+transform = Transform3D(7.54979e-08, 0, 1, 0, 1, 0, -1, 0, 7.54979e-08, -7, 5, -10)
+use_collision = true
+size = Vector3(1, 11, 9)
+
+[node name="CSGBox3D10" type="CSGBox3D" parent="." unique_id=1249665921]
+transform = Transform3D(-1, 0, 2.6226832e-07, 0, 1, 0, -2.6226832e-07, 0, -1, -10, 5, -6.0000076)
+use_collision = true
+size = Vector3(1, 11, 9)
+
+[node name="CSGBox3D11" type="CSGBox3D" parent="." unique_id=1106265221]
+transform = Transform3D(1, 0, -3.4969108e-07, 0, 1, 0, 3.4969108e-07, 0, 1, -10.000002, 5, 6.9999914)
+use_collision = true
+size = Vector3(1, 11, 9)
+
+[node name="CSGBox3D12" type="CSGBox3D" parent="." unique_id=7255530]
+transform = Transform3D(6.5567076e-07, 0, 1, 0, 1, 0, -1, 0, 6.5567076e-07, -6.0000076, 5, 9.999979)
+use_collision = true
+size = Vector3(1, 11, 9)
+
+[node name="CSGBox3D13" type="CSGBox3D" parent="." unique_id=398356137]
+transform = Transform3D(1.3113022e-06, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, 1.3113022e-06, 6.9999685, 5, 10.000004)
+use_collision = true
+size = Vector3(1, 11, 9)
+
+[node name="RoomDetector" type="Area3D" parent="." unique_id=709826533]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RoomDetector" unique_id=664049669]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+shape = SubResource("BoxShape3D_4gpss")
