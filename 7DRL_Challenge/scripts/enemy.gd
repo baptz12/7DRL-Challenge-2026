@@ -3,6 +3,9 @@ extends CharacterBody3D
 # --- STATS DE L'ENNEMI ---
 const SPEED = 8.0 # Un peu plus lent que le joueur, mais rapide quand même !
 const GRAVITY = 25.0
+const ATTACK_RANGE = 4.0
+const DAMAGE_COOLDOWN = 1.0 # Le joueur perd 1 HP par seconde s'il reste collé
+var last_damage_time = 0.0
 
 # --- VARIABLES DU JUICE ---
 const BOB_FREQ = 4.0 # Fréquence des pas (très rapide = nerveux)
@@ -76,7 +79,13 @@ func _physics_process(delta: float) -> void:
 		visuals.rotation.x = lerp(visuals.rotation.x, 0.0, delta * 10.0)
 		visuals.position.y = lerp(visuals.position.y, 0.0, delta * 10.0)
 
+	if target and is_instance_valid(target):
+		var dist = global_position.distance_to(target.global_position)
+		
+		if dist <= ATTACK_RANGE:
+			attempt_attack()
 	move_and_slide()
+	
 
 # Fonction pour plus tard quand on donnera des coups d'épée !
 func take_damage(amount: int):
@@ -90,3 +99,10 @@ func take_damage(amount: int):
 		
 func die() -> void:
 	queue_free()
+	
+func attempt_attack():
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_damage_time >= DAMAGE_COOLDOWN:
+		if target.has_method("take_damage"):
+			target.take_damage(1) # Inflige 1 point de dégât
+			last_damage_time = current_time

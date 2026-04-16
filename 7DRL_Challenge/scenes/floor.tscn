@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://ec16gxuthjhg"]
+
+[ext_resource type="Texture2D" uid="uid://d3x36pp7802u5" path="res://assets/eU_floorclang2_Height.png" id="1_ukw5w"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kuqtn"]
+albedo_color = Color(0.33660764, 0.3366076, 0.3366076, 1)
+albedo_texture = ExtResource("1_ukw5w")
+
+[node name="Floor" type="Node3D" unique_id=1738665147]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=142475261]
+use_collision = true
+size = Vector3(50, 1, 50)
+material = SubResource("StandardMaterial3D_kuqtn")

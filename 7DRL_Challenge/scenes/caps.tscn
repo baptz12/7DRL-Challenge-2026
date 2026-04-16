@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://b2lktgjf41lr3"]
-
-[node name="Caps" type="Node3D" unique_id=324581848]
-
-[node name="CSGBox3D10" type="CSGBox3D" parent="." unique_id=1494851619]
-use_collision = true
-size = Vector3(1, 7.6082764, 2.7695313)

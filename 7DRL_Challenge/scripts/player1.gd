@@ -15,6 +15,12 @@ var t_bob = 0.0
 @onready var portrait_anim: AnimationPlayer = get_node_or_null("HUD/MarginContainer/Ancor/SubViewportContainer/PortraitModel/Root Scene/AnimationPlayer")
 @onready var weapon_anim: AnimationPlayer = get_node_or_null("Weapon/WeaponAnim")
 @onready var hitbox: Area3D = get_node_or_null("Weapon/Hitbox")
+@onready var laser_pivot: Node3D = get_node_or_null("Weapon/LaserPivot")
+@onready var laser_mesh: MeshInstance3D = get_node_or_null("Weapon/LaserPivot/LaserMesh")
+@onready var gunshot: AudioStreamPlayer3D = get_node_or_null("Gunshot")
+@onready var damage_overlay: ColorRect = get_node_or_null("HUD/DamageOverlay")
+@onready var weapon: Node3D = get_node_or_null("Weapon")
+
 
 var mouse_captured = false
 @export var sens_horizontal = 0.5
@@ -22,6 +28,12 @@ var mouse_captured = false
 @export var turn_speed: float = 10.0
 @export var min_pitch: float = -80.0
 @export var max_pitch: float = 80.0
+@export var shoot_cooldown: float = 0.2
+var last_shot_time: float = 0.0
+
+@export var max_hp: int = 10
+var hp: int = 10
+var invulnerable_time: float = 0.0
 
 @export var dash_speed: float = 25.0
 @export var dash_duration: float = 0.15 # Très court pour que ça soit "sec" et nerveux
@@ -134,6 +146,9 @@ func _physics_process(delta: float) -> void:
 	if portrait_anim:
 		portrait_anim.play("CharacterArmature|Idle")
 
+	if invulnerable_time > 0:
+		invulnerable_time -= delta
+
 	move_and_slide()
 
 
@@ -143,10 +158,58 @@ func _on_hitbox_body_entered(body: Node3D) -> void:
 		if body.has_method("take_damage"):
 			body.take_damage(10)
 	
+
+func shoot_laser():
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_shot_time < shoot_cooldown:
+		return 
+	last_shot_time = current_time
+
+	# 1. Tir du Raycast
+	var space_state = get_world_3d().direct_space_state
+	var screen_center = get_viewport().size / 2.0
+	var origin = camera_3d.project_ray_origin(screen_center)
+	var end = origin + camera_3d.project_ray_normal(screen_center) * 100.0 
+	
+	var query = PhysicsRayQueryParameters3D.create(origin, end)
+	query.exclude = [self] 
+	var result = space_state.intersect_ray(query)
+	var hit_position = end
+	
+	# 2. Gestion de l'impact
+	if result:
+		hit_position = result.position
+		if result.collider.is_in_group("enemy"):
+			if result.collider.has_method("take_damage"):
+				result.collider.take_damage(5) 
+	
+	# 3. Affichage OPTIMISÉ du rayon (Zéro lag)
+	if laser_pivot and laser_mesh:
+		laser_pivot.visible = true
+		
+		# Le pivot tourne pour regarder la zone d'impact
+		laser_pivot.look_at(hit_position, Vector3.UP)
+		
+		# On étire le laser en fonction de la distance
+		var distance = laser_pivot.global_position.distance_to(hit_position)
+		laser_mesh.scale.y = distance
+		laser_mesh.position.z = -(distance / 2.0)
+		
+		# On cache le laser au bout de 0.05 seconde
+		await get_tree().create_timer(0.05).timeout
+		if is_instance_valid(laser_pivot):
+			laser_pivot.visible = false
+
 func attack():
 	# S'il a une arme et qu'elle n'est pas DÉJÀ en train d'attaquer
+	gunshot.play()
 	if weapon_anim and not weapon_anim.is_playing():
 		weapon_anim.play("attack")
+	# Si on a une Arme mais pas de Hitbox (le Fusil)
+	elif get_node_or_null("Weapon"):
+		shoot_laser()
+	#if !weapon_anim.is_playing("attack"):
+		#weapon_anim.
 	
 func capture_mouse():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -155,3 +218,35 @@ func capture_mouse():
 func release_mouse():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	mouse_captured = false
+	
+func take_damage(amount: int):
+	# Si le joueur vient de se faire toucher, on le protège un court instant
+	if invulnerable_time > 0: return 
+	
+	hp -= amount
+	print("PV restants : ", hp)
+	
+	# On donne 1 seconde d'invulnérabilité
+	invulnerable_time = 1.0 
+	
+	if damage_overlay:
+		var tween = create_tween()
+		# On fait apparaître le rouge rapidement (0.3 d'opacité)
+		tween.tween_property(damage_overlay, "color:a", 0.4, 0.1)
+		# On le fait disparaître lentement
+		tween.tween_property(damage_overlay, "color:a", 0.0, 0.5)
+	
+	# Petit effet d'impact sur la caméra pour donner de la force au coup
+	if camera_mount:
+		camera_mount.rotation.x += deg_to_rad(5.0)
+	
+	if hp <= 0:
+		die()
+
+func die():
+	# On réinitialise la difficulté à x1
+	var root = get_tree().root
+	root.set_meta("difficulty_multiplier", 1)
+	
+	# On recommence la partie
+	get_tree().reload_current_scene()

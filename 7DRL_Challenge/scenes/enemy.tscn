@@ -5,7 +5,7 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7p1mj"]
 radius = 1.34375
-height = 3.9603271
+height = 3.6432495
 
 [node name="Enemy" type="CharacterBody3D" unique_id=771033681 groups=["enemy"]]
 script = ExtResource("1_md0e3")
@@ -72,7 +72,7 @@ transform = Transform3D(0.9999127, -0.0069590546, -0.009713031, 0.011923978, 0.5
 autoplay = &"CharacterArmature|Idle"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=21828372]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6078491, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7663879, 0)
 shape = SubResource("CapsuleShape3D_7p1mj")
 
 [editable path="Visuals/Root Scene"]

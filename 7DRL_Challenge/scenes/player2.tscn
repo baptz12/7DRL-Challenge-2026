@@ -4,17 +4,74 @@
 [ext_resource type="PackedScene" uid="uid://bfugcm3i8fwvn" path="res://assets/Astronaut (1).glb" id="2_c08b3"]
 [ext_resource type="Texture2D" uid="uid://qn7qcgr8ehsa" path="res://assets/transparent-sci-fi-modern-user-interface-futuristic-hud-png.png" id="3_agjl5"]
 [ext_resource type="PackedScene" uid="uid://yqoyquadx0wa" path="res://assets/Scifi Assault Rifle.glb" id="4_dj65e"]
+[ext_resource type="Texture2D" uid="uid://bxb1bgnfoon3j" path="res://assets/crosshair.png" id="5_hb4is"]
+[ext_resource type="AudioStream" uid="uid://k1g3d18acg0a" path="res://assets/chakong-laser-gun-shot-sound-future-sci-fi-lazer-wobble-chakongaudio-174883.mp3" id="6_gmtae"]
+[ext_resource type="Texture2D" uid="uid://1csv37o2dgvh" path="res://assets/Chicken foot/Tex_ChickenFoot.png" id="7_3ejgl"]
+[ext_resource type="ArrayMesh" uid="uid://bxithqveqvrka" path="res://assets/Chicken foot/Mesh_ChickenFoot.obj" id="7_8l1to"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3vyb7"]
-radius = 0.95751953
+radius = 0.5288086
 height = 2.5030518
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dj65e"]
+albedo_color = Color(0.40392157, 1, 1, 1)
+emission_enabled = true
+emission = Color(0.005994878, 0.20583653, 0.895366, 1)
+emission_energy_multiplier = 5.57
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hb4is"]
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.0
+
+[sub_resource type="Animation" id="Animation_3ejgl"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshChickenFoot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1.7094121, 0.53060985, -1.2821358)]
+}
+
+[sub_resource type="Animation" id="Animation_24gv0"]
+resource_name = "attack"
+length = 0.45
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshChickenFoot:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.0009999999, 0.19999999, 0.43333334),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(1.7094121, 0.53060985, -0.3052302), Vector3(1.7094121, 0.53060985, -1.6123519), Vector3(1.7094121, 0.53060985, -0.3052302)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_dauvq"]
+_data = {
+&"RESET": SubResource("Animation_3ejgl"),
+&"attack": SubResource("Animation_24gv0")
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_24gv0"]
+albedo_texture = ExtResource("7_3ejgl")
 
 [node name="Player1" type="CharacterBody3D" unique_id=1519538894 groups=["player"]]
 script = ExtResource("1_3vyb7")
 
 [node name="CameraMount" type="SpringArm3D" parent="." unique_id=868899174]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.74704, -0.8733258)
+transform = Transform3D(1, 0, 0, 0, 0.49999994, 0.8660254, 0, -0.8660254, 0.49999994, 0, 1.74704, -0.8733258)
+collision_mask = 0
 spring_length = 0.0
+margin = 0.05
 
 [node name="Camera3D" type="Camera3D" parent="CameraMount" unique_id=621675861]
 current = true
@@ -26,7 +83,7 @@ transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)
 transform = Transform3D(-0.9996668, 0, -0.0258106, 0, 1, 0, 0.0258106, 0, -0.9996668, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1509142042]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3104858, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7094121, 0.53060985, -1.2821358)
 shape = SubResource("CapsuleShape3D_3vyb7")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1743230593]
@@ -75,9 +132,64 @@ offset_bottom = 200.0
 texture = ExtResource("3_agjl5")
 expand_mode = 1
 
+[node name="DamageOverlay" type="ColorRect" parent="HUD" unique_id=2005007206]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+color = Color(1, 0, 0, 0)
+
 [node name="Weapon" type="Node3D" parent="." unique_id=433023657]
-transform = Transform3D(0.033999614, 0, 0.69917375, 0, 0.69999987, 0, -0.69917375, 0, 0.033999614, 0.7957748, 1.1963061, -1.8647069)
+transform = Transform3D(-0.0065360665, 0, 0.6999694, 0, 0.69999975, 0, -0.6999694, 0, -0.0065360665, 1.5518688, 0.8258201, -1.8973932)
+visible = false
 
 [node name="Root Scene" parent="Weapon" unique_id=1061341448 instance=ExtResource("4_dj65e")]
+
+[node name="LaserPivot" type="Node3D" parent="Weapon" unique_id=580823179]
+transform = Transform3D(0.02428545, 0, -0.49940985, 0, 0.5, 0, 0.49940985, 0, 0.02428545, 1.2090559, 0.2847817, -0.04331404)
+
+[node name="LaserMesh" type="MeshInstance3D" parent="Weapon/LaserPivot" unique_id=1336290800]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.5)
+material_override = SubResource("StandardMaterial3D_dj65e")
+mesh = SubResource("CylinderMesh_hb4is")
+
+[node name="WeaponAnim" type="AnimationPlayer" parent="Weapon" unique_id=221303586]
+root_node = NodePath("../..")
+libraries/ = SubResource("AnimationLibrary_dauvq")
+
+[node name="Crosshair" type="Control" parent="." unique_id=460760889]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="Crosshair" unique_id=363768102]
+layout_mode = 0
+offset_right = 100.0
+offset_bottom = 100.0
+texture = ExtResource("5_hb4is")
+expand_mode = 1
+
+[node name="Gunshot" type="AudioStreamPlayer3D" parent="." unique_id=555353279]
+stream = ExtResource("6_gmtae")
+volume_db = -5.0
+
+[node name="MeshChickenFoot" type="MeshInstance3D" parent="." unique_id=1273799652]
+transform = Transform3D(-0.029946549, 0.00021021497, 0.0016668414, 0.0016472599, -0.017066138, 0.026404358, 0.0007004906, 0.049119268, 0.00916687, 1.7094121, 0.53060985, -1.2821358)
+material_override = SubResource("StandardMaterial3D_24gv0")
+mesh = ExtResource("7_8l1to")
 
 [editable path="Visuals/Root Scene"]
